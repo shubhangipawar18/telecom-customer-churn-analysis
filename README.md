@@ -173,7 +173,7 @@ The analysis includes the following SQL queries:
 7. **Churn Rate by Senior Status**
 8. **View Creation for Power BI**
 
-See [`churn_analysis.sql`](churn_analysis.sql) for complete queries.
+See [`SQL_churn_analysis_query.txt`](SQL_churn_analysis_query.txt) for complete queries.
 
 ---
 
@@ -217,5 +217,6 @@ Former SNOC Engineer at Vodafone with 2+ years of telecom operations experience.
 ---
 
 ⭐ **If you found this project useful, please give it a star!**
+
 
 
