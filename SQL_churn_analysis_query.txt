@@ -1,0 +1,129 @@
+CREATE TABLE customers (
+    customer_id VARCHAR(20) PRIMARY KEY,
+    gender VARCHAR(10),
+    senior_citizen INTEGER,
+    partner VARCHAR(5),
+    dependents VARCHAR(5),
+    tenure INTEGER,
+    phone_service VARCHAR(5),
+    multiple_lines VARCHAR(20),
+    internet_service VARCHAR(20),
+    online_security VARCHAR(20),
+    online_backup VARCHAR(20),
+    device_protection VARCHAR(20),
+    tech_support VARCHAR(20),
+    streaming_tv VARCHAR(20),
+    streaming_movies VARCHAR(20),
+    contract VARCHAR(20),
+    paperless_billing VARCHAR(5),
+    payment_method VARCHAR(30),
+    monthly_charges DECIMAL(10,2),
+    total_charges VARCHAR(20),
+    churn VARCHAR(5)
+);
+
+SELECT COUNT(*) FROM customers;
+
+SELECT * FROM customers LIMIT 5;
+
+SELECT churn, COUNT(*) as count
+FROM customers
+GROUP BY churn;
+
+SELECT 
+    contract,
+    COUNT(*) as total_customers,
+    SUM(CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END) as churned,
+    ROUND(SUM(CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as churn_rate
+FROM customers
+GROUP BY contract
+ORDER BY churn_rate DESC;
+
+SELECT 
+    CASE 
+        WHEN tenure <= 12 THEN '0-12 months'
+        WHEN tenure <= 24 THEN '13-24 months'
+        WHEN tenure <= 48 THEN '25-48 months'
+        ELSE '49+ months'
+    END as tenure_group,
+    COUNT(*) as total_customers,
+    SUM(CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END) as churned,
+    ROUND(SUM(CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as churn_rate
+FROM customers
+GROUP BY tenure_group
+ORDER BY churn_rate DESC;
+
+SELECT 
+    internet_service,
+    COUNT(*) as total_customers,
+    SUM(CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END) as churned,
+    ROUND(SUM(CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as churn_rate
+FROM customers
+GROUP BY internet_service
+ORDER BY churn_rate DESC;
+
+
+SELECT 
+    payment_method,
+    COUNT(*) as total_customers,
+    SUM(CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END) as churned,
+    ROUND(SUM(CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as churn_rate
+FROM customers
+GROUP BY payment_method
+ORDER BY churn_rate DESC;
+
+
+SELECT 
+    churn,
+    COUNT(*) as customers,
+    ROUND(SUM(monthly_charges)::numeric, 2) as total_monthly_revenue,
+    ROUND(SUM(CAST(NULLIF(TRIM(total_charges), '') AS DECIMAL))::numeric, 2) as total_revenue
+FROM customers
+GROUP BY churn;
+
+SELECT 
+    CASE WHEN senior_citizen = 1 THEN 'Senior' ELSE 'Non-Senior' END as customer_type,
+    COUNT(*) as total_customers,
+    SUM(CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END) as churned,
+    ROUND(SUM(CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as churn_rate
+FROM customers
+GROUP BY senior_citizen
+ORDER BY churn_rate DESC;
+
+
+CREATE VIEW churn_analysis AS
+SELECT 
+    customer_id,
+    gender,
+    CASE WHEN senior_citizen = 1 THEN 'Senior' ELSE 'Non-Senior' END as senior_status,
+    partner,
+    dependents,
+    tenure,
+    CASE 
+        WHEN tenure <= 12 THEN '0-12 months'
+        WHEN tenure <= 24 THEN '13-24 months'
+        WHEN tenure <= 48 THEN '25-48 months'
+        ELSE '49+ months'
+    END as tenure_group,
+    phone_service,
+    multiple_lines,
+    internet_service,
+    online_security,
+    online_backup,
+    device_protection,
+    tech_support,
+    streaming_tv,
+    streaming_movies,
+    contract,
+    paperless_billing,
+    payment_method,
+    monthly_charges,
+    CAST(NULLIF(TRIM(total_charges), '') AS DECIMAL) as total_charges,
+    churn,
+    CASE WHEN churn = 'Yes' THEN 1 ELSE 0 END as churn_flag
+FROM customers;
+
+SELECT * FROM churn_analysis;
+
+
+
